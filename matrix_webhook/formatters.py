@@ -39,7 +39,7 @@ def github(data, headers):
         )
         pusher = f"[@{pusher['name']}](https://github.com/{pusher['name']})"
         # Since we use monorepos and use an org-wide webhook, let's add repo info too.
-        repo = f"[{repository['full_name']}]({repository['http_url']})"
+        repo = f"[{repository['full_name']}]({repository['html_url']})"
         # The commit shasum hashes are noisy, so just make the ref link to the full compare
         data["body"] = f"{repo}: {pusher} pushed on [{ref}]({c}):\n\n"
         for commit in data["commits"]:
