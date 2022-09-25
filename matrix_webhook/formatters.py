@@ -39,15 +39,28 @@ def github(data, headers):
         )
         pusher = f"[@{pusher['name']}](https://github.com/{pusher['name']})"
         # Since we use monorepos and use an org-wide webhook, let's add repo info too.
-        repo = f"[{repository['full_name']}]({repository['url']})"
+        repo = f"[{repository['full_name']}]({repository['http_url']})"
         # The commit shasum hashes are noisy, so just make the ref link to the full compare
         data["body"] = f"{repo}: {pusher} pushed on [{ref}]({c}):\n\n"
         for commit in data["commits"]:
             # We only really need the shortlog of each relevant commit
             shortlog = commit['message'].strip().split("\n")[0]
             data["body"] += f"- [{shortlog}]({commit['url']})\n"
+    elif headers["X-GitHub-Event"] == "pull_request":
+        action, number, pr, repo = (
+            data[k] for k in ["action", "number", "pull_request", "repository"]
+        )
+        pr_title = pr['title']
+        pr_url = pr['html_url']
+        pr_user = pr['user']['login']
+        reponame = repo['full_name']
+        repo_url = repo['html_url']
+
+        data["body"] = f"[@{pr_user}](https://github.com/{pr_user}) {action} [PR #{number} in {reponame}]({repo_url}/pulls/):\n\n"
+        data["body"] += f"[{pr_title}]({pr_url})"
     else:
-        data["body"] = "notification from github"
+        event = headers["X-GitHub-Event"]
+        data["body"] = f"unsupported github event: '{event}'"
     data["digest"] = headers["X-Hub-Signature-256"].replace("sha256=", "")
     return data
 
