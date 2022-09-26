@@ -55,8 +55,12 @@ def github(data, headers):
         pr_user = pr['user']['login']
         reponame = repo['full_name']
         repo_url = repo['html_url']
+        url_query = "pulls/"
 
-        data["body"] = f"[@{pr_user}](https://github.com/{pr_user}) {action} [PR #{number} in {reponame}]({repo_url}/pulls/):\n\n"
+        if action == "closed":
+            url_query="pulls/?q=is%3Apr+is%3Aclosed"
+
+        data["body"] = f"[@{pr_user}](https://github.com/{pr_user}) {action} [PR #{number} in {reponame}]({repo_url}/{url_query}):\n\n"
         data["body"] += f"[{pr_title}]({pr_url})"
     else:
         event = headers["X-GitHub-Event"]
