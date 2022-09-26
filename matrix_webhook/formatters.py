@@ -60,8 +60,8 @@ def github(data, headers):
         if action == "closed":
             url_query="pulls/?q=is%3Apr+is%3Aclosed"
 
-        data["body"] = f"[@{pr_user}](https://github.com/{pr_user}) {action} [PR #{number} in {reponame}]({repo_url}/{url_query}):\n\n"
-        data["body"] += f"[{pr_title}]({pr_url})"
+        data["body"] = f"PR#{number} [{pr_title}]({pr_url})\n\n"
+        data["body"] += f"{action} in [{reponame}]({repo_url}/{url_query}) by [@{pr_user}](https://github.com/{pr_user})"
     else:
         event = headers["X-GitHub-Event"]
         data["body"] = f"unsupported github event: '{event}'"
