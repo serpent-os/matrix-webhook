@@ -37,11 +37,11 @@ def github(data, headers):
         pusher, repository, ref, a, b, c = (
             data[k] for k in ["pusher", "repository", "ref", "after", "before", "compare"]
         )
-        pusher = f"[@{pusher['name']}](https://github.com/{pusher['name']})"
+        pusher_url = f"[@{pusher['name']}](https://github.com/{pusher['name']})"
         # Since we use monorepos and use an org-wide webhook, let's add repo info too.
-        repo = f"[{repository['full_name']}]({repository['html_url']})"
+        repo_url = f"[{repository['full_name']}]({repository['html_url']})"
         # The commit shasum hashes are noisy, so just make the ref link to the full compare
-        data["body"] = f"{repo}: {pusher} pushed on [{ref}]({c}):\n\n"
+        data["body"] = f"{repo_url}: {pusher_url} pushed on [{ref}]({c}):\n\n"
         for commit in data["commits"]:
             # We only really need the shortlog of each relevant commit
             shortlog = commit['message'].strip().split("\n")[0]
@@ -50,18 +50,25 @@ def github(data, headers):
         action, number, pr, repo = (
             data[k] for k in ["action", "number", "pull_request", "repository"]
         )
-        pr_title = pr['title']
-        pr_url = pr['html_url']
-        pr_user = pr['user']['login']
-        reponame = repo['full_name']
-        repo_url = repo['html_url']
-        url_query = "pulls/"
+        # avoid PR spam and wasted CPU cycles
+        if action in ["opened", "closed", "reopened", "edited",
+                      "ready for review", "review requested"]:
+            pr_title = pr['title']
+            pr_url = pr['html_url']
+            pr_user = pr['user']['login']
+            reponame = repo['full_name']
+            repo_url = repo['html_url']
+            url_query = "pulls/"
 
-        if action == "closed":
-            url_query="pulls/?q=is%3Apr+is%3Aclosed"
+            if action == "closed":
+                url_query="pulls/?q=is%3Apr+is%3Aclosed"
 
-        data["body"] = f"PR#{number} [{pr_title}]({pr_url})\n\n"
-        data["body"] += f"{action} in [{reponame}]({repo_url}/{url_query}) by [@{pr_user}](https://github.com/{pr_user})"
+            data["body"] = f"PR#{number} [{pr_title}]({pr_url})\n\n"
+            data["body"] += f"{action} by [@{pr_user}](https://github.com/{pr_user}) "
+            data["body"] += f"in [{reponame}]({repo_url}/{url_query})"
+        # endif
+        # GH webhook will get a 400 return code w/missing body if the action
+        # isn't in the allow-list
     else:
         event = headers["X-GitHub-Event"]
         data["body"] = f"unsupported github event: '{event}'"
