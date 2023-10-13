@@ -46,10 +46,16 @@ def github(data, headers):
         repo_url = f"[{repository['full_name']}]({repository['html_url']})"
         # The commit shasum hashes are noisy, so just make the ref link to the full compare
         data['body'] = f"{repo_url}: {pusher_url} pushed on [{ref}]({c}):\n\n"
+        commits = 0
         for commit in data['commits']:
+            # Elide commit list once we go past a reasonable number of commits for readability
+            if commits > 4:
+                data['body'] += f"- (...)\n"
+                break
             # We only really need the shortlog of each relevant commit
             shortlog = commit['message'].strip().split("\n")[0]
             data['body'] += f"- [{shortlog}]({commit['url']})\n"
+            commits += 1
     elif headers['X-GitHub-Event'] == "pull_request":
         action, number, pr = (
             data[k] for k in ["action", "number", "pull_request"]
