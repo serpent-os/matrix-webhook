@@ -47,7 +47,7 @@ def github(data, headers):
 
         if len(data['commits']) == 0:
             # The user deleted a branch
-            data['body'] = f"{repo_url}: {pusher_url} deleted branch _{ref}_.\n"
+            data['body'] = f"{repo_url}: {pusher_url} deleted branch <del>{ref}</del>\n"
         else:
             # The commit shasum hashes are noisy, so just make the ref link to the full compare
             data['body'] = f"{repo_url}: {pusher_url} pushed on [{ref}]({c}):\n\n"
