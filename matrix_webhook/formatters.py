@@ -47,7 +47,7 @@ def github(data, headers):
 
         if len(data['commits']) == 0:
             # The user deleted a branch
-            data['body'] = f"{repo_url}: {pusher_url} deleted branch [{ref}]({c}):\n\n"
+            data['body'] = f"{repo_url}: {pusher_url} deleted branch _{ref}_.\n"
         else:
             # The commit shasum hashes are noisy, so just make the ref link to the full compare
             data['body'] = f"{repo_url}: {pusher_url} pushed on [{ref}]({c}):\n\n"
@@ -55,7 +55,7 @@ def github(data, headers):
         commits = 0
         for commit in data['commits']:
             # Elide commit list once we go past a reasonable number of commits for readability
-            if commits > 4:
+            if commits >= 5:
                 data['body'] += f"- (...)\n"
                 break
             # We only really need the shortlog of each relevant commit
