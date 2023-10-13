@@ -45,7 +45,7 @@ def github(data, headers):
         # Since we use monorepos and use an org-wide webhook, let's add repo info too.
         repo_url = f"[{repository['full_name']}]({repository['html_url']})"
 
-        if len(data['commits'] == 0):
+        if len(data['commits']) == 0:
             # The user deleted a branch
             data['body'] = f"{repo_url}: {pusher_url} deleted branch [{ref}]({c}):\n\n"
         else:
