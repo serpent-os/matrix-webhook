@@ -44,8 +44,14 @@ def github(data, headers):
         pusher_url = f"[@{pusher['name']}](https://github.com/{pusher['name']})"
         # Since we use monorepos and use an org-wide webhook, let's add repo info too.
         repo_url = f"[{repository['full_name']}]({repository['html_url']})"
-        # The commit shasum hashes are noisy, so just make the ref link to the full compare
-        data['body'] = f"{repo_url}: {pusher_url} pushed on [{ref}]({c}):\n\n"
+
+        if len(data['commits'] == 0):
+            # The user deleted a branch
+            data['body'] = f"{repo_url}: {pusher_url} deleted branch [{ref}]({c}):\n\n"
+        else:
+            # The commit shasum hashes are noisy, so just make the ref link to the full compare
+            data['body'] = f"{repo_url}: {pusher_url} pushed on [{ref}]({c}):\n\n"
+
         commits = 0
         for commit in data['commits']:
             # Elide commit list once we go past a reasonable number of commits for readability
