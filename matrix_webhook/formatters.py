@@ -34,6 +34,7 @@ def github(data, headers):
     """Pretty-print a github notification."""
     # TODO: Write nice useful formatters. This is only an example.
     repository = data['repository']
+    # It doesn't make sense to show private commits in public, so turn that off
     if repository['private'] and repository['visibility'] == "private":
         pass
         # GH webhook will get a 400 return code w/missing body
@@ -52,16 +53,14 @@ def github(data, headers):
             # The commit shasum hashes are noisy, so just make the ref link to the full compare
             data['body'] = f"{repo_url}: {pusher_url} pushed on [{ref}]({c}):\n\n"
 
-        commits = 0
-        for commit in data['commits']:
+        for idx, commit in enumerate(data['commits']):
             # Elide commit list once we go past a reasonable number of commits for readability
-            if commits >= 5:
-                data['body'] += f"- (...)\n"
+            if idx >= 4:
+                data['body'] += f"- (... {len(data['commits') - 4)} more commits ...)"
                 break
             # We only really need the shortlog of each relevant commit
             shortlog = commit['message'].strip().split("\n")[0]
             data['body'] += f"- [{shortlog}]({commit['url']})\n"
-            commits += 1
     elif headers['X-GitHub-Event'] == "pull_request":
         action, number, pr = (
             data[k] for k in ["action", "number", "pull_request"]
