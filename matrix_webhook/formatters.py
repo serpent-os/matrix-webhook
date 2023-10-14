@@ -56,7 +56,7 @@ def github(data, headers):
         for idx, commit in enumerate(data['commits']):
             # Elide commit list once we go past a reasonable number of commits for readability
             if idx >= 4:
-                data['body'] += f"- (... {len(data['commits') - 4)} more commits ...)"
+                data['body'] += f"- (... {len(data['commits')] - 4} more commits ...)"
                 break
             # We only really need the shortlog of each relevant commit
             shortlog = commit['message'].strip().split("\n")[0]
