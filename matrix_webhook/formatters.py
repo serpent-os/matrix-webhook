@@ -47,8 +47,13 @@ def github(data, headers):
         repo_url = f"[{repository['full_name']}]({repository['html_url']})"
 
         if len(data['commits']) == 0:
+            # `git push --tags` has empty commit field, but mentions refs/tags/ in ref
+            if "refs/tags/" in ref:
+                data['body'] = f"{repo_url:} {pusher_url} pushed tag {ref}\n"
+            # TODO: May need branch-creation parsing logic here
             # The user deleted a branch
-            data['body'] = f"{repo_url}: {pusher_url} deleted branch <del>{ref}</del>\n"
+            else
+                data['body'] = f"{repo_url}: {pusher_url} deleted branch <del>{ref}</del>\n"
         else:
             # The commit shasum hashes are noisy, so just make the ref link to the full compare
             data['body'] = f"{repo_url}: {pusher_url} pushed on [{ref}]({c}):\n\n"
