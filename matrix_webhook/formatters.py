@@ -47,9 +47,10 @@ def github(data, headers):
         repo_url = f"[{repository['full_name']}]({repository['html_url']})"
 
         if len(data['commits']) == 0:
-            # `git push --tags` has empty commit field, but mentions refs/tags/ in ref
+            # `git push --tags` has empty commit field, but mentions refs/tags/<the-tag> in ref
             if "refs/tags/" in ref:
-                data['body'] = f"{repo_url}: {pusher_url} pushed tag {ref}\n"
+                tag = ref.split("/")[-1]
+                data['body'] = f"{repo_url}: {pusher_url} pushed tag [{tag}]({repo_url}/releases/tag/{tag})\n"
             # TODO: May need branch-creation parsing logic here
             # The user deleted a branch
             else:
