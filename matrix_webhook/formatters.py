@@ -49,10 +49,10 @@ def github(data, headers):
         if len(data['commits']) == 0:
             # `git push --tags` has empty commit field, but mentions refs/tags/ in ref
             if "refs/tags/" in ref:
-                data['body'] = f"{repo_url:} {pusher_url} pushed tag {ref}\n"
+                data['body'] = f"{repo_url}: {pusher_url} pushed tag {ref}\n"
             # TODO: May need branch-creation parsing logic here
             # The user deleted a branch
-            else
+            else:
                 data['body'] = f"{repo_url}: {pusher_url} deleted branch <del>{ref}</del>\n"
         else:
             # The commit shasum hashes are noisy, so just make the ref link to the full compare
@@ -61,7 +61,7 @@ def github(data, headers):
         for idx, commit in enumerate(data['commits']):
             # Elide commit list once we go past a reasonable number of commits for readability
             if idx >= 4:
-                data['body'] += f"- (... {len(data['commits')] - 4} more commits ...)"
+                data['body'] += f"- (... {len(data['commits']) - 4} more commits ...)"
                 break
             # We only really need the shortlog of each relevant commit
             shortlog = commit['message'].strip().split("\n")[0]
