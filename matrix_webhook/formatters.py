@@ -50,7 +50,8 @@ def github(data, headers):
             # `git push --tags` has empty commit field, but mentions refs/tags/<the-tag> in ref
             if "refs/tags/" in ref:
                 tag = ref.split("/")[-1]
-                data['body'] = f"{repo_url}: {pusher_url} pushed tag [{tag}]({repo_url}/releases/tag/{tag})\n"
+                tag_url = f"{repository['html_url']}/releases/tag/{tag}"
+                data['body'] = f"{repo_url}: {pusher_url} pushed tag [{tag}]({tag_url})\n"
             # TODO: May need branch-creation parsing logic here
             # The user deleted a branch
             else:
