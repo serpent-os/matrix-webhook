@@ -69,24 +69,25 @@ def github(data, headers):
             shortlog = commit['message'].strip().split("\n")[0]
             data['body'] += f"- [{shortlog}]({commit['url']})\n"
     elif headers['X-GitHub-Event'] == "pull_request":
-        action, number, pr = (
-            data[k] for k in ["action", "number", "pull_request"]
+        action, number, pr, sender = (
+            data[k] for k in ["action", "number", "pull_request", "sender"]
         )
         # avoid PR spam and wasted CPU cycles
         if action in ["opened", "closed", "reopened", "edited",
                       "ready for review", "review requested"]:
             pr_title = pr['title']
             pr_url = pr['html_url']
-            pr_user = pr['user']['login']
             reponame = repository['full_name']
             repo_url = repository['html_url']
+            # the user associated with the actual action, not just the PR
+            sender_user = sender['login']
             url_query = "pulls/"
 
             if action == "closed":
                 url_query="pulls/?q=is%3Apr+is%3Aclosed"
 
             data['body'] = f"PR#{number} [{pr_title}]({pr_url})\n\n"
-            data['body'] += f"{action} by [@{pr_user}](https://github.com/{pr_user}) "
+            data['body'] += f"{action} by [@{sender_user}](https://github.com/{sender_user}) "
             data['body'] += f"in [{reponame}]({repo_url}/{url_query})"
         # endif
         # GH webhook will get a 400 return code w/missing body if the action
