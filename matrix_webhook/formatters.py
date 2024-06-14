@@ -59,7 +59,9 @@ def github(data, headers):
             elif deleted:
                 data['body'] = f"{repo_url}: {pusher_url} deleted branch <del>{ref}</del>\n"
             elif forced:
-                data['body'] = f"{repo_url}: {pusher_url} force pushed on [{ref}]({a})\n"
+                branch = ref.split("/")[-1]
+                branch_url = f"{repository['html_url']}/commits/{branch}"
+                data['body'] = f"{repo_url}: {pusher_url} force pushed on [{ref}]({branch_url})\n"
             # Yet to be understood scenario
             else:
                 pass
