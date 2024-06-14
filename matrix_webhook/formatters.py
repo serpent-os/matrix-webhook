@@ -40,7 +40,7 @@ def github(data, headers):
         # GH webhook will get a 400 return code w/missing body
     elif headers['X-GitHub-Event'] == "push":
         pusher, ref, compare, created, deleted, forced = (
-            data[k] for k in ["pusher", "ref", "compare", "created", "deleted", "forced" ]
+            data[k] for k in ["pusher", "ref", "compare", "created", "deleted", "forced"]
         )
         pusher_url = f"[@{pusher['name']}](https://github.com/{pusher['name']})"
         # Since we use monorepos and use an org-wide webhook, let's add repo info too.
@@ -67,9 +67,9 @@ def github(data, headers):
                 pass
         else:
             # The commit shasum hashes are noisy, so just make the ref link to the full compare
-            data['body] = f"{repo_url}: {pusher_url}"
+            data['body] = f"{repo_url}: {pusher_url} "
             if forced:
-                data['body'] += " force "
+                data['body'] += "force "
             data['body'] += f"pushed on [{ref}]({compare}):\n\n"
 
         for idx, commit in enumerate(data['commits']):
