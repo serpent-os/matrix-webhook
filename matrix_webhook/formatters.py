@@ -55,11 +55,11 @@ def github(data, headers):
                 tag_url = f"{repository['html_url']}/releases/tag/{tag}"
                 data['body'] = f"{repo_url}: {pusher_url} pushed tag [{tag}]({tag_url})\n"
             elif created:
-                data['body'] = f"{repo_url}: {pusher_url} created branch [{ref}]({ref})\n"
+                data['body'] = f"{repo_url}: {pusher_url} created empty branch _{ref}_\n"
             elif deleted:
                 data['body'] = f"{repo_url}: {pusher_url} deleted branch <del>{ref}</del>\n"
             elif forced:
-                data['body'] = f"{repo_url}: {pusher_url} force pushed on [{ref}]({c})\n"                
+                data['body'] = f"{repo_url}: {pusher_url} force pushed on [{ref}]({a})\n"
             # Yet to be understood scenario
             else:
                 pass
