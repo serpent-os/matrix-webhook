@@ -67,7 +67,7 @@ def github(data, headers):
                 pass
         else:
             # The commit shasum hashes are noisy, so just make the ref link to the full compare
-            data['body] = f"{repo_url}: {pusher_url} "
+            data['body'] = f"{repo_url}: {pusher_url} "
             if forced:
                 data['body'] += "force "
             data['body'] += f"pushed on [{ref}]({compare}):\n\n"
