@@ -49,7 +49,7 @@ def github(data, headers):
 
 
 def github_aerynos(data, headers):
-    """Custom pretty-printer for GH notifications"""
+    """Custom AerynOS handler for GH notifications."""
     repository = data['repository']
     # It doesn't make sense to show private commits in public, so turn that off
     if repository['private'] and repository['visibility'] == "private":
