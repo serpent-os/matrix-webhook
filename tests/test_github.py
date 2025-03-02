@@ -62,7 +62,7 @@ class GithubFormatterTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(message.sender, FULL_ID)
         self.assertEqual(
             message.formatted_body,
-            "<p>notification from github</p>",
+            "<p>unsupported github event: 'something else'</p>",
         )
 
     async def test_github_push(self):
